@@ -1099,4 +1099,97 @@ public class TestItem {
                 assertFalse(output.contains("Item:"),
                                 "Controller should not print the item header for a failed search.");
         }
+
+        @Test
+        void modelItem_BaseClassCoverage_ShouldBe100Percent() {
+
+                // --- Test Static Fields and Constructors ---
+                int initialTotal = Item.gettotalItem();
+
+                // Test default constructor and its effect on the static counter
+                Medicine med1 = new Medicine();
+                assertEquals("", med1.getItemCode(), "Default constructor ItemCode check.");
+                assertEquals(initialTotal + 1, Item.gettotalItem(), "Default constructor should increment totalItem.");
+
+                // Test parameterized constructor
+                Medicine med2 = new Medicine("T0002", "TestDesc", 5.0, 10, "Headache", 2);
+                assertEquals("T0002", med2.getItemCode(), "Parameterized constructor ItemCode check.");
+                assertEquals(10, med2.getItemQuantity(), "Parameterized constructor ItemQuantity check.");
+                assertEquals(initialTotal + 2, Item.gettotalItem(),
+                                "Parameterized constructor should increment totalItem.");
+
+                // Test static increment method explicitly
+                Item.InctotalItem();
+                assertEquals(initialTotal + 3, Item.gettotalItem(), "InctotalItem should increment totalItem.");
+
+                // --- Test Setters and Getters (Assuming you added setters to Item.java) ---
+                med2.setItemCode("Z0001");
+                med2.setItemDescription("New Desc");
+                med2.setItemPrice(99.99);
+                med2.setItemQuantity(50);
+
+                assertEquals("Z0001", med2.getItemCode(), "Setter/Getter for ItemCode.");
+                assertEquals("New Desc", med2.getItemDescription(), "Setter/Getter for ItemDescription.");
+                assertEquals(99.99, med2.getItemPrice(), 0.001, "Setter/Getter for ItemPrice.");
+                assertEquals(50, med2.getItemQuantity(), "Setter/Getter for ItemQuantity.");
+
+                // --- Test toString() ---
+                String output = med2.toString();
+                assertTrue(output.contains("Z0001"), "Item toString must contain the updated code.");
+                assertTrue(output.contains("RM99.99"), "Item toString must contain the formatted price.");
+        }
+
+        // 2. Comprehensive Test for Medicine.java
+        @Test
+        void modelMedicine_fullCoverage_shouldBe100Percent() {
+
+                // --- Test Constructors and Getters ---
+                // Parameterized constructor test
+                Medicine m = new Medicine("M1000", "Pills", 10.0, 5, "Flu", 3);
+                assertEquals("Flu", m.getForDisease(), "Initial ForDisease check.");
+                assertEquals(3, m.getamountDaytake(), "Initial amountDaytake check.");
+
+                // Default constructor test
+                Medicine defaultM = new Medicine();
+                assertEquals("", defaultM.getForDisease(), "Default ForDisease check.");
+                assertEquals(0, defaultM.getamountDaytake(), "Default amountDaytake check.");
+
+                // --- Test Setters ---
+                m.setForDisease("Cold");
+                m.setamountDaytake(1);
+                assertEquals("Cold", m.getForDisease(), "Setter update check for ForDisease.");
+                assertEquals(1, m.getamountDaytake(), "Setter update check for amountDaytake.");
+
+                // --- Test toString() ---
+                String output = m.toString();
+                assertTrue(output.contains("Cold"), "toString() should include updated ForDisease.");
+                assertTrue(output.contains("1"), "toString() should include updated amountDaytake.");
+        }
+
+        // 3. Comprehensive Test for Supplement.java
+        @Test
+        void modelSupplement_fullCoverage_shouldBe100Percent() {
+
+                // --- Test Constructors and Getters ---
+                // Parameterized constructor test
+                Supplement s = new Supplement("S1000", "Vitamins", 20.0, 8, "Energy", 241231);
+                assertEquals("Energy", s.getFunction(), "Initial Function check.");
+                assertEquals(241231, s.getexpireDate(), "Initial expireDate check.");
+
+                // Default constructor test
+                Supplement defaultS = new Supplement();
+                assertEquals("", defaultS.getFunction(), "Default Function check.");
+                assertEquals(0, defaultS.getexpireDate(), "Default expireDate check.");
+
+                // --- Test Setters ---
+                s.setFunction("Immunity Boost");
+                s.setexpireDate(250101);
+                assertEquals("Immunity Boost", s.getFunction(), "Setter update check for Function.");
+                assertEquals(250101, s.getexpireDate(), "Setter update check for expireDate.");
+
+                // --- Test toString() ---
+                String output = s.toString();
+                assertTrue(output.contains("Immunity Boost"), "toString() should include updated Function.");
+                assertTrue(output.contains("250101"), "toString() should include updated expireDate.");
+        }
 }
