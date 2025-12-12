@@ -12,6 +12,10 @@ import main.java.config.StaffMenuOption;
 public class StaffView {
     private final Scanner scanner = new Scanner(System.in);
 
+    /**
+     * Displays the staff menu and returns the user's selection.
+     * @return numeric menu choice
+     */
     public int menu() {
         System.out.println(StaffConstants.MENU_HEADER);
         System.out.println(StaffConstants.MENU_TITLE);
@@ -23,6 +27,10 @@ public class StaffView {
         return scanner.nextInt();
     }
 
+    /**
+     * Collects a new staff entry with validation for each field.
+     * @return populated staff instance
+     */
     public Staff promptNewStaff() {
         scanner.nextLine(); // consume newline
         String staffId = promptValidated(StaffConstants.PROMPT_STAFF_ID_NEW, Validation::isStaffId, StaffConstants.MSG_INVALID_STAFF_ID_FORMAT);
@@ -38,11 +46,21 @@ public class StaffView {
         return new Staff(staffId, password, new Name(first, last), phone, position, new Address(street, postcode, region, state));
     }
 
+    /**
+     * Prompts for a staff ID using the provided label.
+     * @param prompt prompt text to show
+     * @return validated staff ID
+     */
     public String promptStaffId(String prompt) {
         scanner.nextLine(); // consume newline if needed
         return promptValidated(prompt, Validation::isStaffId, StaffConstants.MSG_INVALID_STAFF_ID_FORMAT);
     }
 
+    /**
+     * Prompts for new field values while allowing blanks to keep current data.
+     * @param current existing staff data
+     * @return updated staff instance
+     */
     public Staff promptUpdate(Staff current) {
         scanner.nextLine(); // consume newline
         System.out.println(StaffConstants.PROMPT_LEAVE_BLANK);
@@ -61,6 +79,12 @@ public class StaffView {
         return new Staff(staffId, password, new Name(first, last), phone, position, new Address(street, postcode, region, state));
     }
 
+    /**
+     * Repeatedly prompts until the validator accepts the input.
+     * @param prompt text to display
+     * @param validator predicate to validate the input
+     * @param errorMessage message to show on validation failure
+     */
     private String promptValidated(String prompt, Predicate<String> validator, String errorMessage) {
         while (true) {
             System.out.print(prompt);
@@ -72,6 +96,13 @@ public class StaffView {
         }
     }
 
+    /**
+     * Prompts for an updated field value, returning the current value if blank.
+     * @param label label to show the user
+     * @param currentValue value to keep when input is blank
+     * @param validator predicate to validate non-blank input
+     * @param errorMessage message when validation fails
+     */
     private String promptUpdateField(String label, String currentValue, Predicate<String> validator, String errorMessage) {
         while (true) {
             System.out.print(label + " [" + currentValue + "]: ");
@@ -86,6 +117,10 @@ public class StaffView {
         }
     }
 
+    /**
+     * Prints a single staff member's details to the console.
+     * @param staff staff to display
+     */
     public void showStaff(Staff staff) {
         System.out.println(StaffConstants.DISPLAY_STAFF_INFO);
         System.out.println(StaffConstants.DISPLAY_STAFF_ID + staff.getStaffId());
@@ -100,6 +135,10 @@ public class StaffView {
         System.out.println(StaffConstants.DISPLAY_STATE + staff.getaddress().getstate());
     }
 
+    /**
+     * Prints a list of staff, one by one.
+     * @param staffList staff collection to display
+     */
     public void showList(List<Staff> staffList) {
         System.out.println(StaffConstants.DISPLAY_ALL_STAFF);
         for (Staff s : staffList) {
@@ -107,6 +146,10 @@ public class StaffView {
         }
     }
 
+    /**
+     * Prints an informational message to the console.
+     * @param message text to display
+     */
     public void info(String message) {
         System.out.println(message);
     }

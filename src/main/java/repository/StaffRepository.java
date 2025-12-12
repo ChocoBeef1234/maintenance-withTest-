@@ -16,6 +16,10 @@ import main.java.config.StaffConstants;
 
 public class StaffRepository {
 
+    /**
+     * Loads every staff record from the staff file.
+     * @return list of parsed staff entries; empty if file missing
+     */
     public List<Staff> findAll() throws IOException {
         List<Staff> staffList = new ArrayList<>();
         File staffFile = new File(FilePaths.STAFF);
@@ -34,6 +38,11 @@ public class StaffRepository {
         return staffList;
     }
 
+    /**
+     * Retrieves a staff member by ID.
+     * @param staffId ID to search for
+     * @return staff if found; otherwise null
+     */
     public Staff findById(String staffId) throws IOException {
         File staffFile = new File(FilePaths.STAFF);
         if (!staffFile.exists()) {
@@ -51,6 +60,11 @@ public class StaffRepository {
         return null;
     }
 
+    /**
+     * Appends a new staff record if the file exists and ID is unique.
+     * @param staff staff entity to add
+     * @return true when added; false for missing file or duplicate ID
+     */
     public boolean add(Staff staff) throws IOException {
         File staffFile = new File(FilePaths.STAFF);
         if (!staffFile.exists()) {
@@ -65,6 +79,12 @@ public class StaffRepository {
         return true;
     }
 
+    /**
+     * Updates an existing staff record by ID.
+     * @param id current ID to match
+     * @param updated new staff data to write
+     * @return true when the record is found and replaced
+     */
     public boolean update(String id, Staff updated) throws IOException {
         File staffFile = new File(FilePaths.STAFF);
         File newFile = new File(FilePaths.STAFF_TMP);
@@ -94,6 +114,11 @@ public class StaffRepository {
         return found;
     }
 
+    /**
+     * Deletes a staff record by ID.
+     * @param staffId ID to delete
+     * @return true when a record is removed
+     */
     public boolean delete(String staffId) throws IOException {
         File staffFile = new File(FilePaths.STAFF);
         File newFile = new File(FilePaths.STAFF_TMP);
@@ -122,6 +147,12 @@ public class StaffRepository {
         return found;
     }
 
+    /**
+     * Verifies login credentials by comparing stored password.
+     * @param id staff ID
+     * @param password plain text password to match
+     * @return staff when credentials match; otherwise null
+     */
     public Staff validateCredentials(String id, String password) throws IOException {
         Staff staff = findById(id);
         if (staff != null && staff.getpassword().equals(password)) {
@@ -130,6 +161,11 @@ public class StaffRepository {
         return null;
     }
 
+    /**
+     * Converts a file line into a Staff object when the field count matches.
+     * @param line raw line from the staff file
+     * @return parsed staff or null when the line is invalid
+     */
     private Staff parseStaffLine(String line) {
         String[] info = line.split(Pattern.quote(StaffConstants.FIELD_DELIMITER));
         if (info.length >= StaffConstants.REQUIRED_FIELD_COUNT) {
@@ -150,6 +186,11 @@ public class StaffRepository {
         return null;
     }
 
+    /**
+     * Serialises a staff entity into a file line using the configured delimiter.
+     * @param staff staff to serialise
+     * @return delimited string representation
+     */
     private String toLine(Staff staff) {
         return staff.getStaffId() + StaffConstants.FIELD_DELIMITER +
                 staff.getpassword() + StaffConstants.FIELD_DELIMITER +

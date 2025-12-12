@@ -15,18 +15,26 @@ public enum StaffMenuOption {
         this.description = description;
     }
 
+    /** Returns the numeric value shown in the menu. */
     public int getOptionNumber() {
         return optionNumber;
     }
 
+    /** Returns the plain-text description. */
     public String getDescription() {
         return description;
     }
 
+    /** Returns the formatted line for menu display. */
     public String getDisplayText() {
         return optionNumber + ". " + description;
     }
 
+    /**
+     * Resolves a menu option from its number.
+     * @param optionNumber number selected by the user
+     * @return matching option or null when not found
+     */
     public static StaffMenuOption fromOptionNumber(int optionNumber) {
         for (StaffMenuOption option : values()) {
             if (option.optionNumber == optionNumber) {
