@@ -1,0 +1,13 @@
+M0001||Aspirin||3.0||43||Pain Relief||2
+M0002||Paracetamol||2.5||36||Fever Reducer||1
+M0003||Cough Syrup||4.0||14||Cough and Cold||3
+M0004||Painkiller||2.5||35||Pain Relief||2
+S0005||Vitamin C||5.0||27||Immune Support||230525
+S0006||Fish Oil||7.5||15||Omega-3 Fatty Acids||230404
+M0007||Allergy Relief||5.5||27||Allergies Treatment||1
+S0008||Calcium||7.0||76||Bone Health||240714
+S0009||Vitamin D||6.0||17||Bone Health||230815
+M0010||Cough Drops||3.0||10||Cough and Cold||4
+S0011||Vitamin B12||8.0||8||Energy Boost||240924
+M9090||344||-10.0||1||1||1
+S0101||w||32.0||3||3||3

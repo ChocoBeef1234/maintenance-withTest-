@@ -1,0 +1,6 @@
+S1001||0123456789||Raiden||Shogun||012-345-6789||Asistant||1 Jalan Ipoh Taman Ipoh||98765||Inazuma||Teyvat
+S1002||yaemiko123||Yae||Miko||013-087-6374||Pharmacist||2 Jalan Ipoh Taman Ipoh||98765||Inazuma||Teyvat
+S1003||kamisato123||Kamisato||Ayaka||014-083-7378||Pharmacist||3 Jalan Ipoh Taman Ipoh||98765||Inazuma||Teyvat
+S1004||naganohara123||Naganohara||Yoimiya||011-7263-9632||Counter||4 Jalan Ipoh Taman Ipoh||98765||Inazuma||Teyvat
+S1005||tan123||Tan||Khai Wei||017-655-1472||Boss||1 Jalan Tenggiri Taman Sri Tenggara||34200||Parit Buntar||Perak
+S1006||0987654321||jordon||sooooooooooo||016-765-3489||rubish||collector||jalan lol||99999||sooooooo||dooooooo

@@ -1,0 +1,2 @@
+S1001||password123||John||Doe||012-345-6789||Pharmacist||123 Main St||12345||Region1||State1
+S1002||pass456||Jane||Smith||013-456-7890||Assistant||456 Oak Ave||54321||Region2||State2
