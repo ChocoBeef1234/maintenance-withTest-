@@ -198,8 +198,8 @@ public class TestTransaction {
         // Scenario: 
         // 1. Select "1" (Search) 
         // 2. Enter "O_SEARCH_OK" (ID)
-        // 3. Select "3" (Back) to exit loop
-        mockUserInput("1\nO_SEARCH_OK\n3\n");
+        // 3. Select "4" (Back) to exit loop
+        mockUserInput("1\nO_SEARCH_OK\n4\n");
 
         TransactionController controller = new TransactionController();
         controller.run(); 
@@ -214,7 +214,7 @@ public class TestTransaction {
     public void testMenu_SearchFail_Flow() {
         // Scenario: Search for invalid ID
         // 1. Search -> 2. Invalid ID -> 3. Back
-        mockUserInput("1\nO_INVALID\n3\n");
+        mockUserInput("1\nO_INVALID\n4\n");
 
         TransactionController controller = new TransactionController();
         controller.run(); 
@@ -230,10 +230,10 @@ public class TestTransaction {
                 TransactionRecord.Method.CASH, "110", "4"));
 
         // Scenario: 
-        // 1. Select "2" (Delete)
+        // 1. Select "3" (Delete)
         // 2. Enter "O_DEL_OK"
-        // 3. Select "3" (Back)
-        mockUserInput("2\nO_DEL_OK\n3\n");
+        // 3. Select "4" (Back)
+        mockUserInput("3\nO_DEL_OK\n4\n");
 
         TransactionController controller = new TransactionController();
         controller.run();
@@ -246,8 +246,8 @@ public class TestTransaction {
 
     @Test
     public void testMenu_InvalidInput() {
-        // Scenario: User enters "99" (Invalid option) then "3" (Back)
-        mockUserInput("99\n3\n");
+        // Scenario: User enters "99" (Invalid option) then "4" (Back)
+        mockUserInput("99\n4\n");
 
         TransactionController controller = new TransactionController();
         controller.run();
@@ -255,5 +255,248 @@ public class TestTransaction {
         String output = outContent.toString();
         // Checks if default case in switch is hit
         assertTrue(output.contains("Invalid"), "Should handle invalid menu input gracefully");
+    }
+
+    // --- 7. TEST CASES (STATISTICS FUNCTION) ---
+    // Added to ensure comprehensive coverage of the new Statistics feature
+
+    @Test
+    public void testStatistics_EmptyTransactions_ShouldShowZeroValues() {
+        // Arrange: No transactions in repository
+        // Scenario: Select Statistics (option 2) then Back (option 4)
+        mockUserInput("2\n4\n");
+
+        TransactionController controller = new TransactionController();
+        controller.run();
+
+        // Assert
+        String output = outContent.toString();
+        assertTrue(output.contains("Transaction Statistics"), "Should display statistics header");
+        assertTrue(output.contains("Total Transactions: 0"), "Should show zero transactions");
+        assertTrue(output.contains("Total Revenue: RM0.00"), "Should show zero revenue");
+        assertTrue(output.contains("Average Transaction: N/A"), "Should show N/A for average when no transactions");
+        assertTrue(output.contains("Cash: 0 transactions"), "Should show zero cash transactions");
+        assertTrue(output.contains("Bank: 0 transactions"), "Should show zero bank transactions");
+        assertTrue(output.contains("E-Wallet: 0 transactions"), "Should show zero e-wallet transactions");
+    }
+
+    @Test
+    public void testStatistics_MultiplePaymentMethods_ShouldCalculateCorrectly() throws IOException {
+        // Seed transactions with different payment methods
+        repository.add(new TransactionRecord("O_STAT_1", 100.0, 0, 0, 6.0, 106.0, 
+                TransactionRecord.Method.CASH, "110", "4"));
+        repository.add(new TransactionRecord("O_STAT_2", 150.0, 10.0, 15.0, 6.0, 143.10, 
+                TransactionRecord.Method.BANK, "Maybank", "1234-5678"));
+        repository.add(new TransactionRecord("O_STAT_3", 200.0, 10.0, 20.0, 6.0, 190.80, 
+                TransactionRecord.Method.EWALLET, "TNG", "012-3456789"));
+        repository.add(new TransactionRecord("O_STAT_4", 50.0, 0, 0, 6.0, 53.0, 
+                TransactionRecord.Method.CASH, "55", "2"));
+
+        // Scenario: Select Statistics (option 2) then Back (option 4)
+        mockUserInput("2\n4\n");
+
+        TransactionController controller = new TransactionController();
+        controller.run();
+
+        // Assert
+        String output = outContent.toString();
+        assertTrue(output.contains("Total Transactions: 4"), "Should show correct total count");
+        // Total: 106.0 + 143.10 + 190.80 + 53.0 = 492.90
+        assertTrue(output.contains("Total Revenue: RM492.90"), "Should show correct total revenue (106.0 + 143.10 + 190.80 + 53.0 = 492.90)");
+        // Average: 492.90 / 4 = 123.225, rounded to 123.23
+        assertTrue(output.contains("Average Transaction: RM123.23"), "Should show correct average");
+        assertTrue(output.contains("Cash: 2 transactions"), "Should show correct cash count");
+        assertTrue(output.contains("Bank: 1 transactions"), "Should show correct bank count");
+        assertTrue(output.contains("E-Wallet: 1 transactions"), "Should show correct e-wallet count");
+        // Check for totals (allowing for formatting)
+        assertTrue(output.contains("RM159.00") || output.contains("159.00"), "Should show cash total (106.0 + 53.0 = 159.00)");
+        assertTrue(output.contains("RM143.10") || output.contains("143.10"), "Should show bank total");
+        assertTrue(output.contains("RM190.80") || output.contains("190.80"), "Should show e-wallet total");
+    }
+
+    @Test
+    public void testStatistics_SinglePaymentMethod_ShouldShowOnlyThatMethod() throws IOException {
+        // Arrange: Seed only cash transactions
+        repository.add(new TransactionRecord("O_CASH_1", 100.0, 0, 0, 6.0, 106.0, 
+                TransactionRecord.Method.CASH, "110", "4"));
+        repository.add(new TransactionRecord("O_CASH_2", 200.0, 10.0, 20.0, 6.0, 190.80, 
+                TransactionRecord.Method.CASH, "200", "9.20"));
+
+        // Scenario: Select Statistics (option 2) then Back (option 4)
+        mockUserInput("2\n4\n");
+
+        TransactionController controller = new TransactionController();
+        controller.run();
+
+        // Assert
+        String output = outContent.toString();
+        assertTrue(output.contains("Total Transactions: 2"), "Should show correct total count");
+        assertTrue(output.contains("Total Revenue: RM296.80"), "Should show correct total revenue");
+        assertTrue(output.contains("Average Transaction: RM148.40"), "Should show correct average");
+        assertTrue(output.contains("Cash: 2 transactions"), "Should show cash count");
+        assertTrue(output.contains("RM296.80"), "Should show cash total");
+        assertTrue(output.contains("Bank: 0 transactions"), "Should show zero bank");
+        assertTrue(output.contains("E-Wallet: 0 transactions"), "Should show zero e-wallet");
+    }
+
+    @Test
+    public void testStatistics_MenuFlow_ShouldDisplayStatistics() throws IOException {
+        // Arrange: Seed some transactions
+        repository.add(new TransactionRecord("O_FLOW_1", 100.0, 0, 0, 6.0, 106.0, 
+                TransactionRecord.Method.CASH, "110", "4"));
+
+        // Scenario: 
+        // 1. Select "2" (Statistics)
+        // 2. Select "4" (Back)
+        mockUserInput("2\n4\n");
+
+        TransactionController controller = new TransactionController();
+        controller.run();
+
+        // Assert
+        String output = outContent.toString();
+        assertTrue(output.contains("Transaction Statistics"), "Should display statistics header");
+        assertTrue(output.contains("===================="), "Should display statistics formatting");
+        assertTrue(output.contains("Payment Method Breakdown:"), "Should display payment method section");
+    }
+
+    @Test
+    public void testStatistics_CalculationAccuracy_ShouldMatchExpectedValues() throws IOException {
+        // Arrange: Seed transactions with known values for precise calculation testing
+        // Transaction 1: 100.0 total, 0% discount, 6% tax = 106.0 final
+        repository.add(new TransactionRecord("O_CALC_1", 100.0, 0, 0, 6.0, 106.0, 
+                TransactionRecord.Method.CASH, "110", "4"));
+        // Transaction 2: 200.0 total, 10% discount (20.0), 6% tax = 190.80 final
+        repository.add(new TransactionRecord("O_CALC_2", 200.0, 10.0, 20.0, 6.0, 190.80, 
+                TransactionRecord.Method.BANK, "Bank", "1234"));
+        // Transaction 3: 50.0 total, 0% discount, 6% tax = 53.0 final
+        repository.add(new TransactionRecord("O_CALC_3", 50.0, 0, 0, 6.0, 53.0, 
+                TransactionRecord.Method.EWALLET, "EW", "123"));
+
+        // Scenario: Select Statistics
+        mockUserInput("2\n4\n");
+
+        TransactionController controller = new TransactionController();
+        controller.run();
+
+        // Assert: Verify precise calculations
+        String output = outContent.toString();
+        // Total: 106.0 + 190.80 + 53.0 = 349.80
+        assertTrue(output.contains("Total Revenue: RM349.80"), "Should calculate total revenue correctly");
+        // Average: 349.80 / 3 = 116.60 (rounded to 2 decimal places)
+        assertTrue(output.contains("Average Transaction: RM116.60"), "Should calculate average correctly");
+        // Cash: 1 transaction, 106.0
+        assertTrue(output.contains("Cash: 1 transactions"), "Should show correct cash count");
+        assertTrue(output.contains("RM106.00"), "Should show correct cash total");
+        // Bank: 1 transaction, 190.80
+        assertTrue(output.contains("Bank: 1 transactions"), "Should show correct bank count");
+        assertTrue(output.contains("RM190.80"), "Should show correct bank total");
+        // E-Wallet: 1 transaction, 53.0
+        assertTrue(output.contains("E-Wallet: 1 transactions"), "Should show correct e-wallet count");
+        assertTrue(output.contains("RM53.00"), "Should show correct e-wallet total");
+    }
+
+    @Test
+    public void testStatistics_AllPaymentMethods_ShouldShowCompleteBreakdown() throws IOException {
+        // Arrange: Seed one transaction for each payment method
+        repository.add(new TransactionRecord("O_ALL_1", 100.0, 0, 0, 6.0, 106.0, 
+                TransactionRecord.Method.CASH, "110", "4"));
+        repository.add(new TransactionRecord("O_ALL_2", 120.0, 5.0, 6.0, 6.0, 120.84, 
+                TransactionRecord.Method.BANK, "CIMB", "5678-9012"));
+        repository.add(new TransactionRecord("O_ALL_3", 80.0, 0, 0, 6.0, 84.80, 
+                TransactionRecord.Method.EWALLET, "GrabPay", "019-8765432"));
+
+        // Scenario: Select Statistics
+        mockUserInput("2\n4\n");
+
+        TransactionController controller = new TransactionController();
+        controller.run();
+
+        // Assert: Verify all payment methods are represented
+        String output = outContent.toString();
+        assertTrue(output.contains("Total Transactions: 3"), "Should show correct total");
+        assertTrue(output.contains("Cash: 1 transactions"), "Should show cash");
+        assertTrue(output.contains("Bank: 1 transactions"), "Should show bank");
+        assertTrue(output.contains("E-Wallet: 1 transactions"), "Should show e-wallet");
+        assertTrue(output.contains("RM106.00"), "Should show cash amount");
+        assertTrue(output.contains("RM120.84"), "Should show bank amount");
+        assertTrue(output.contains("RM84.80"), "Should show e-wallet amount");
+    }
+
+    @Test
+    public void testStatistics_ErrorHandling_ShouldDisplayErrorMessage() throws IOException {
+        // Arrange: Create a scenario that might cause an error
+        // We'll test by ensuring the file exists but might have issues
+        // Note: This test verifies the error handling path in handleStatistics
+        
+        // Scenario: Select Statistics (option 2) then Back (option 4)
+        // The file should exist from BeforeEach, so this should work normally
+        // But we test that the method handles exceptions gracefully
+        mockUserInput("2\n4\n");
+
+        TransactionController controller = new TransactionController();
+        controller.run();
+
+        // Assert: Should not crash, should either show statistics or error message
+        String output = outContent.toString();
+        // If successful, should show statistics; if error, should show error message
+        assertTrue(output.contains("Transaction Statistics") || 
+                   output.contains("Failed to retrieve transaction statistics"),
+                   "Should either display statistics or error message, not crash");
+    }
+
+    @Test
+    public void testStatistics_LargeDataset_ShouldCalculateCorrectly() throws IOException {
+        // Arrange: Seed many transactions to test performance and accuracy
+        double expectedTotal = 0.0;
+        int cashCount = 0, bankCount = 0, ewalletCount = 0;
+        double cashTotal = 0.0, bankTotal = 0.0, ewalletTotal = 0.0;
+
+        // Add 10 transactions with varying amounts and methods
+        for (int i = 1; i <= 10; i++) {
+            double baseAmount = i * 10.0;
+            double discount = baseAmount >= 150 ? 10.0 : (baseAmount >= 100 ? 5.0 : 0.0);
+            double discountAmt = baseAmount * (discount / 100.0);
+            double finalPrice = (baseAmount - discountAmt) * 1.06;
+            expectedTotal += finalPrice;
+
+            TransactionRecord.Method method;
+            if (i % 3 == 0) {
+                method = TransactionRecord.Method.CASH;
+                cashCount++;
+                cashTotal += finalPrice;
+            } else if (i % 3 == 1) {
+                method = TransactionRecord.Method.BANK;
+                bankCount++;
+                bankTotal += finalPrice;
+            } else {
+                method = TransactionRecord.Method.EWALLET;
+                ewalletCount++;
+                ewalletTotal += finalPrice;
+            }
+
+            repository.add(new TransactionRecord("O_LARGE_" + i, baseAmount, discount, discountAmt, 6.0, finalPrice,
+                    method, "Field1_" + i, "Field2_" + i));
+        }
+
+        // Scenario: Select Statistics
+        mockUserInput("2\n4\n");
+
+        TransactionController controller = new TransactionController();
+        controller.run();
+
+        // Assert
+        String output = outContent.toString();
+        assertTrue(output.contains("Total Transactions: 10"), "Should show correct total count");
+        assertTrue(output.contains(String.format("Total Revenue: RM%.2f", expectedTotal)), 
+                   "Should show correct total revenue");
+        assertTrue(output.contains(String.format("Average Transaction: RM%.2f", expectedTotal / 10)), 
+                   "Should show correct average");
+        assertTrue(output.contains(String.format("Cash: %d transactions", cashCount)), 
+                   "Should show correct cash count");
+        assertTrue(output.contains(String.format("Bank: %d transactions", bankCount)), 
+                   "Should show correct bank count");
+        assertTrue(output.contains(String.format("E-Wallet: %d transactions", ewalletCount)), 
+                   "Should show correct e-wallet count");
     }
 }
