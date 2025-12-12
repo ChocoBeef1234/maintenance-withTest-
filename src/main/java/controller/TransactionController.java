@@ -64,9 +64,12 @@ public class TransactionController {
                     handleSearch();
                     break;
                 case 2:
-                    handleDelete();
+                    handleStatistics();
                     break;
                 case 3:
+                    handleDelete();
+                    break;
+                case 4:
                     back = true;
                     break;
                 default:
@@ -99,6 +102,44 @@ public class TransactionController {
         } catch (Exception e) {
             e.printStackTrace();
             view.info("\nFailed to delete transaction.");
+        }
+    }
+
+    private void handleStatistics() {
+        try {
+            java.util.List<TransactionRecord> allTransactions = repository.findAll();
+            int totalTransactions = allTransactions.size();
+            double totalRevenue = 0.0;
+            int cashCount = 0, bankCount = 0, ewalletCount = 0;
+            double cashTotal = 0.0, bankTotal = 0.0, ewalletTotal = 0.0;
+
+            for (TransactionRecord record : allTransactions) {
+                double finalPrice = record.getFinalPrice();
+                totalRevenue += finalPrice;
+
+                switch (record.getMethod()) {
+                    case CASH:
+                        cashCount++;
+                        cashTotal += finalPrice;
+                        break;
+                    case BANK:
+                        bankCount++;
+                        bankTotal += finalPrice;
+                        break;
+                    case EWALLET:
+                        ewalletCount++;
+                        ewalletTotal += finalPrice;
+                        break;
+                }
+            }
+
+            double averageTransaction = totalTransactions > 0 ? totalRevenue / totalTransactions : 0.0;
+            view.showStatistics(totalTransactions, totalRevenue, averageTransaction, 
+                               cashCount, cashTotal, bankCount, bankTotal, 
+                               ewalletCount, ewalletTotal);
+        } catch (Exception e) {
+            e.printStackTrace();
+            view.info("\nFailed to retrieve transaction statistics.");
         }
     }
 

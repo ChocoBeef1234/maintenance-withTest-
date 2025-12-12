@@ -10,8 +10,9 @@ public class TransactionView {
         System.out.println("   Transaction");
         System.out.println("--------------------");
         System.out.println("1. Search");
-        System.out.println("2. Delete");
-        System.out.println("3. Back");
+        System.out.println("2. Statistics");
+        System.out.println("3. Delete");
+        System.out.println("4. Back");
         System.out.print("Select Function: ");
         return scanner.nextInt();
     }
@@ -87,6 +88,26 @@ public class TransactionView {
 
     public void info(String msg) {
         System.out.println(msg);
+    }
+
+    public void showStatistics(int totalTransactions, double totalRevenue, double averageTransaction, 
+                               int cashCount, double cashTotal, int bankCount, double bankTotal, 
+                               int ewalletCount, double ewalletTotal) {
+        System.out.println("\n\n====================");
+        System.out.println("Transaction Statistics");
+        System.out.println("====================");
+        System.out.printf("Total Transactions: %d\n", totalTransactions);
+        System.out.printf("Total Revenue: RM%.2f\n", totalRevenue);
+        if (totalTransactions > 0) {
+            System.out.printf("Average Transaction: RM%.2f\n", averageTransaction);
+        } else {
+            System.out.println("Average Transaction: N/A");
+        }
+        System.out.println("\nPayment Method Breakdown:");
+        System.out.printf("  Cash: %d transactions, RM%.2f\n", cashCount, cashTotal);
+        System.out.printf("  Bank: %d transactions, RM%.2f\n", bankCount, bankTotal);
+        System.out.printf("  E-Wallet: %d transactions, RM%.2f\n", ewalletCount, ewalletTotal);
+        System.out.println("====================\n");
     }
 }
 
