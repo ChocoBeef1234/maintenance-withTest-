@@ -2,26 +2,15 @@ package main.java.model;
 
 // Removed I/O, Scanner, and controller.Home imports
 
-public abstract class Item
-{
-	
+public abstract class Item {
+
 	protected String ItemCode;
 	protected String ItemDescription;
 	protected double ItemPrice;
 	protected int ItemQuantity;
 	private static int totalItem = 0;
-	
-	public Item()
-	{
-		ItemCode = "";
-		ItemDescription = "";
-		ItemPrice = 0;
-		ItemQuantity = 0;
-		totalItem++;
-	}
-	
-	public Item(String ItemCode,String ItemDescription,double ItemPrice,int ItemQuantity)
-	{
+
+	public Item(String ItemCode, String ItemDescription, double ItemPrice, int ItemQuantity) {
 		this.ItemCode = ItemCode;
 		this.ItemDescription = ItemDescription;
 		this.ItemPrice = ItemPrice;
@@ -29,29 +18,48 @@ public abstract class Item
 		totalItem++;
 	}
 
-///////////////////////////////////////////////////////////////////////////////////////
-//Get method
-	public static int gettotalItem()
-	{
+	public static int gettotalItem() {
 		return totalItem;
 	}
-	
-///////////////////////////////////////////////////////////////////////////////////////
-//totalItem Increment
 
-	public static void InctotalItem()
-	{
+	public static void InctotalItem() {
 		totalItem++;
 	}
-	
-///////////////////////////////////////////////////////////////////////////////////////
-// The entire deprecated 'public static void deleteItem()' method is REMOVED.
 
-///////////////////////////////////////////////////////////////////////////////////////
-//toString function
+	public String getItemCode() {
+		return ItemCode;
+	}
 
-	public String toString()
-	{        
-	return " Item Code\t\t: " + ItemCode + "\n Item Description\t: " + ItemDescription + "\n Item Price\t\t: RM" + String.format("%.2f", ItemPrice) + "\n Item Quantity\t\t: " + ItemQuantity;
+	public String getItemDescription() {
+		return ItemDescription;
+	}
+
+	public double getItemPrice() {
+		return ItemPrice;
+	}
+
+	public int getItemQuantity() {
+		return ItemQuantity;
+	}
+
+	public void setItemCode(String ItemCode) {
+		this.ItemCode = ItemCode;
+	}
+
+	public void setItemDescription(String ItemDescription) {
+		this.ItemDescription = ItemDescription;
+	}
+
+	public void setItemPrice(double ItemPrice) {
+		this.ItemPrice = ItemPrice;
+	}
+
+	public void setItemQuantity(int ItemQuantity) {
+		this.ItemQuantity = ItemQuantity;
+	}
+
+	public String toString() {
+		return " Item Code\t\t: " + ItemCode + "\n Item Description\t: " + ItemDescription + "\n Item Price\t\t: RM"
+				+ String.format("%.2f", ItemPrice) + "\n Item Quantity\t\t: " + ItemQuantity;
 	}
 }
