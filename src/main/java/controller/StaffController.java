@@ -10,11 +10,16 @@ public class StaffController {
     private final StaffRepository repository;
     private final StaffView view;
 
+    /** Creates a staff controller with its own repository and view. */
     public StaffController() {
         this.repository = new StaffRepository();
         this.view = new StaffView();
     }
 
+    /**
+     * Runs the staff menu loop until the user selects the back option.
+     * Delegates each menu choice to the corresponding handler.
+     */
     public void run() {
         boolean back = false;
         while (!back) {
@@ -45,6 +50,7 @@ public class StaffController {
         }
     }
 
+    /** Prompts for new staff details, validates, and attempts to persist them. */
     private void handleAdd() {
         Staff staff = view.promptNewStaff();
         if (!Validation.isStaffId(staff.getStaffId())) {
@@ -64,6 +70,7 @@ public class StaffController {
         }
     }
 
+    /** Looks up a staff record by ID and displays the result. */
     private void handleSearch() {
         String id = view.promptStaffId(StaffConstants.PROMPT_STAFF_ID_SEARCH);
         try {
@@ -79,6 +86,7 @@ public class StaffController {
         }
     }
 
+    /** Updates an existing staff record after collecting new field values. */
     private void handleModify() {
         String id = view.promptStaffId(StaffConstants.PROMPT_STAFF_ID_MODIFY);
         try {
@@ -100,6 +108,7 @@ public class StaffController {
         }
     }
 
+    /** Removes a staff record when it exists; otherwise informs the user. */
     private void handleDelete() {
         String id = view.promptStaffId(StaffConstants.PROMPT_STAFF_ID_DELETE);
         try {
