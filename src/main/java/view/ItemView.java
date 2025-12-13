@@ -1,6 +1,6 @@
 package main.java.view;
 
-import main.java.config.MenuOption;
+import main.java.config.ItemMenuOption;
 import java.util.List;
 import java.util.Scanner;
 import main.java.model.ItemRecord;
@@ -14,15 +14,15 @@ public class ItemView {
         System.out.println("----------------------------------------");
         
         // Use the enum to print the menu options
-        for (MenuOption option : MenuOption.values()) {
+        for (ItemMenuOption option : ItemMenuOption.values()) {
             System.out.println(option.getValue() + ". " + option.getDescription());
         }
         
         System.out.print("\nEnter your selection: ");
         
         // Get min and max values from the enum for robust validation message
-        int min = MenuOption.ADD.getValue();
-        int max = MenuOption.EXIT.getValue();
+        int min = ItemMenuOption.ADD.getValue();
+        int max = ItemMenuOption.EXIT.getValue();
         String range = "(" + min + "-" + max + ")";
 
         int selection = -1;
@@ -65,7 +65,7 @@ public class ItemView {
         do {
             String input = scanner.nextLine().trim().toUpperCase();
             
-            if (input.equals("X")) { // Exit condition
+            if (input.equals("X")) { 
                 return null;
             }
             

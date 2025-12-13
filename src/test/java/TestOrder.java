@@ -328,7 +328,7 @@ public class TestOrder {
 
     @Test
     void controllerRun_invalidMenuOption_shouldDisplayError() {
-        String input = "99\n" + // invalid option
+        String input = "99\n"+ // invalid option
                        "5\n";  // exit
         setInput(input);
 

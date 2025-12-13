@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import main.java.controller.*;
 import main.java.model.*;
 import main.java.repository.*;
+import main.java.util.PasswordUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -21,12 +22,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-/**
- * JUnit Jupiter tests for StaffRepository, StaffView, and StaffController,
- * focusing on comprehensive CRUD operations, validation, and input handling.
- * Note: These tests assume a config.FilePaths.STAFF constant resolves to
- * "staff.txt".
- */
 public class TestStaff {
 
     // --- File Management Constants and Setup ---
@@ -226,7 +221,7 @@ public class TestStaff {
         assertNotNull(found, "Updated staff should still be findable.");
         assertEquals("Updated", found.getname().getFirstName(), "First name should be updated.");
         assertEquals("New Position", found.getStaffPosition(), "Position should be updated.");
-        assertEquals("newpass", found.getpassword(), "Password should be updated.");
+        assertTrue(PasswordUtil.verifyPassword("newpass", found.getpassword()), "Password should be updated and verifiable.");
     }
 
     @Test
@@ -309,7 +304,7 @@ public class TestStaff {
         // Note: Assuming S1001 has password "0123456789" based on sample data
 
         // Act
-        Staff validated = repository.validateCredentials("S1001", "0123456789");
+        Staff validated = repository.validateCredentials("S1001", "password123");
 
         // Assert
         assertNotNull(validated, "Valid credentials should return staff object.");
@@ -809,7 +804,7 @@ public class TestStaff {
         assertNotNull(found, "Staff should still exist.");
         assertEquals("Updated", found.getname().getFirstName(), "First name should be updated.");
         assertEquals("Old Position", found.getStaffPosition(), "Position should remain unchanged.");
-        assertEquals("oldpass", found.getpassword(), "Password should remain unchanged.");
+        assertTrue(PasswordUtil.verifyPassword("oldpass", found.getpassword()), "Password should remain unchanged and verifiable.");
     }
 
     @Test
@@ -843,7 +838,445 @@ public class TestStaff {
         assertEquals("Updated", found.getname().getFirstName(), "Update should be reflected.");
     }
 
-    // ==================== Helper Methods ====================
+    // ==================== IV. Model Classes Tests ====================
+
+    // --- Address Model Tests ---
+
+    @Test
+    void address_defaultConstructor_shouldCreateEmptyAddress() {
+        // Act
+        Address address = new Address();
+
+        // Assert
+        assertEquals("", address.getstreet(), "Street should be empty.");
+        assertEquals("", address.getpostcode(), "Postcode should be empty.");
+        assertEquals("", address.getregion(), "Region should be empty.");
+        assertEquals("", address.getstate(), "State should be empty.");
+    }
+
+    @Test
+    void address_parameterizedConstructor_shouldSetAllFields() {
+        // Act
+        Address address = new Address("123 Main St", "12345", "Region1", "State1");
+
+        // Assert
+        assertEquals("123 Main St", address.getstreet(), "Street should be set.");
+        assertEquals("12345", address.getpostcode(), "Postcode should be set.");
+        assertEquals("Region1", address.getregion(), "Region should be set.");
+        assertEquals("State1", address.getstate(), "State should be set.");
+    }
+
+    @Test
+    void address_setters_shouldUpdateFields() {
+        // Arrange
+        Address address = new Address();
+
+        // Act
+        address.setstreet("456 Oak Ave");
+        address.setpostcode("54321");
+        address.setregion("Region2");
+        address.setstate("State2");
+
+        // Assert
+        assertEquals("456 Oak Ave", address.getstreet(), "Street should be updated.");
+        assertEquals("54321", address.getpostcode(), "Postcode should be updated.");
+        assertEquals("Region2", address.getregion(), "Region should be updated.");
+        assertEquals("State2", address.getstate(), "State should be updated.");
+    }
+
+    @Test
+    void address_setters_shouldHandleNullValues() {
+        // Arrange
+        Address address = new Address("Street", "12345", "Region", "State");
+
+        // Act
+        address.setstreet(null);
+        address.setpostcode(null);
+        address.setregion(null);
+        address.setstate(null);
+
+        // Assert
+        assertNull(address.getstreet(), "Street should be null.");
+        assertNull(address.getpostcode(), "Postcode should be null.");
+        assertNull(address.getregion(), "Region should be null.");
+        assertNull(address.getstate(), "State should be null.");
+    }
+
+    // --- Name Model Tests ---
+
+    @Test
+    void name_defaultConstructor_shouldCreateEmptyName() {
+        // Act
+        Name name = new Name();
+
+        // Assert
+        assertEquals("", name.getFirstName(), "First name should be empty.");
+        assertEquals("", name.getLastName(), "Last name should be empty.");
+    }
+
+    @Test
+    void name_parameterizedConstructor_shouldSetBothNames() {
+        // Act
+        Name name = new Name("John", "Doe");
+
+        // Assert
+        assertEquals("John", name.getFirstName(), "First name should be set.");
+        assertEquals("Doe", name.getLastName(), "Last name should be set.");
+    }
+
+    @Test
+    void name_setFirstName_shouldUpdateFirstName() {
+        // Arrange
+        Name name = new Name("John", "Doe");
+
+        // Act
+        name.setFirstName("Jane");
+
+        // Assert
+        assertEquals("Jane", name.getFirstName(), "First name should be updated.");
+        assertEquals("Doe", name.getLastName(), "Last name should remain unchanged.");
+    }
+
+    @Test
+    void name_setLastName_shouldUpdateLastName() {
+        // Arrange
+        Name name = new Name("John", "Doe");
+
+        // Act
+        name.setLastName("Smith");
+
+        // Assert
+        assertEquals("John", name.getFirstName(), "First name should remain unchanged.");
+        assertEquals("Smith", name.getLastName(), "Last name should be updated.");
+    }
+
+    @Test
+    void name_setters_shouldHandleNullValues() {
+        // Arrange
+        Name name = new Name("John", "Doe");
+
+        // Act
+        name.setFirstName(null);
+        name.setLastName(null);
+
+        // Assert
+        assertNull(name.getFirstName(), "First name should be null.");
+        assertNull(name.getLastName(), "Last name should be null.");
+    }
+
+    @Test
+    void name_setters_shouldHandleEmptyStrings() {
+        // Arrange
+        Name name = new Name("John", "Doe");
+
+        // Act
+        name.setFirstName("");
+        name.setLastName("");
+
+        // Assert
+        assertEquals("", name.getFirstName(), "First name should be empty.");
+        assertEquals("", name.getLastName(), "Last name should be empty.");
+    }
+
+    // --- Staff Model Tests ---
+
+    @Test
+    void staff_defaultConstructor_shouldCreateEmptyStaff() {
+        // Act
+        Staff staff = new Staff();
+
+        // Assert
+        assertEquals("", staff.getStaffId(), "Staff ID should be empty.");
+        assertEquals("", staff.getpassword(), "Password should be empty.");
+        assertNotNull(staff.getname(), "Name should not be null.");
+        assertEquals("", staff.getname().getFirstName(), "First name should be empty.");
+        assertEquals("", staff.getname().getLastName(), "Last name should be empty.");
+        assertEquals("", staff.getphoneNo(), "Phone number should be empty.");
+        assertEquals("", staff.getStaffPosition(), "Position should be empty.");
+        assertNotNull(staff.getaddress(), "Address should not be null.");
+        assertEquals("", staff.getaddress().getstreet(), "Street should be empty.");
+    }
+
+    @Test
+    void staff_parameterizedConstructor_shouldSetAllFields() {
+        // Arrange
+        Name name = new Name("John", "Doe");
+        Address address = new Address("123 Main St", "12345", "Region1", "State1");
+
+        // Act
+        Staff staff = new Staff("S1001", "password123", name, "012-345-6789", "Pharmacist", address);
+
+        // Assert
+        assertEquals("S1001", staff.getStaffId(), "Staff ID should be set.");
+        assertEquals("password123", staff.getpassword(), "Password should be set.");
+        assertEquals("John", staff.getname().getFirstName(), "First name should be set.");
+        assertEquals("Doe", staff.getname().getLastName(), "Last name should be set.");
+        assertEquals("012-345-6789", staff.getphoneNo(), "Phone number should be set.");
+        assertEquals("Pharmacist", staff.getStaffPosition(), "Position should be set.");
+        assertEquals("123 Main St", staff.getaddress().getstreet(), "Street should be set.");
+    }
+
+    @Test
+    void staff_setStaffId_shouldUpdateStaffId() {
+        // Arrange
+        Staff staff = new Staff();
+
+        // Act
+        staff.setStaffId("S9999");
+
+        // Assert
+        assertEquals("S9999", staff.getStaffId(), "Staff ID should be updated.");
+    }
+
+    @Test
+    void staff_setPassword_shouldUpdatePassword() {
+        // Arrange
+        Staff staff = new Staff();
+
+        // Act
+        staff.setpassword("newpassword");
+
+        // Assert
+        assertEquals("newpassword", staff.getpassword(), "Password should be updated.");
+    }
+
+    @Test
+    void staff_setName_shouldUpdateName() {
+        // Arrange
+        Staff staff = new Staff();
+        Name newName = new Name("Jane", "Smith");
+
+        // Act
+        staff.setname(newName);
+
+        // Assert
+        assertNotNull(staff.getname(), "Name should not be null.");
+        assertEquals("Jane", staff.getname().getFirstName(), "First name should be updated.");
+        assertEquals("Smith", staff.getname().getLastName(), "Last name should be updated.");
+    }
+
+    @Test
+    void staff_setPhoneNo_shouldUpdatePhoneNo() {
+        // Arrange
+        Staff staff = new Staff();
+
+        // Act
+        staff.setphoneNo("013-456-7890");
+
+        // Assert
+        assertEquals("013-456-7890", staff.getphoneNo(), "Phone number should be updated.");
+    }
+
+    @Test
+    void staff_setStaffPosition_shouldUpdatePosition() {
+        // Arrange
+        Staff staff = new Staff();
+
+        // Act
+        staff.setStaffPosition("Manager");
+
+        // Assert
+        assertEquals("Manager", staff.getStaffPosition(), "Position should be updated.");
+    }
+
+    @Test
+    void staff_setAddress_shouldUpdateAddress() {
+        // Arrange
+        Staff staff = new Staff();
+        Address newAddress = new Address("456 Oak Ave", "54321", "Region2", "State2");
+
+        // Act
+        staff.setaddress(newAddress);
+
+        // Assert
+        assertNotNull(staff.getaddress(), "Address should not be null.");
+        assertEquals("456 Oak Ave", staff.getaddress().getstreet(), "Street should be updated.");
+        assertEquals("54321", staff.getaddress().getpostcode(), "Postcode should be updated.");
+        assertEquals("Region2", staff.getaddress().getregion(), "Region should be updated.");
+        assertEquals("State2", staff.getaddress().getstate(), "State should be updated.");
+    }
+
+    @Test
+    void staff_setters_shouldHandleNullValues() {
+        // Arrange
+        Staff staff = new Staff("S1001", "pass", new Name("John", "Doe"), "012-345-6789", "Position", new Address("St", "12345", "Reg", "State"));
+
+        // Act
+        staff.setStaffId(null);
+        staff.setpassword(null);
+        staff.setname(null);
+        staff.setphoneNo(null);
+        staff.setStaffPosition(null);
+        staff.setaddress(null);
+
+        // Assert
+        assertNull(staff.getStaffId(), "Staff ID should be null.");
+        assertNull(staff.getpassword(), "Password should be null.");
+        assertNull(staff.getname(), "Name should be null.");
+        assertNull(staff.getphoneNo(), "Phone number should be null.");
+        assertNull(staff.getStaffPosition(), "Position should be null.");
+        assertNull(staff.getaddress(), "Address should be null.");
+    }
+
+    // --- PasswordUtil Tests ---
+
+    @Test
+    void passwordUtil_hashPassword_shouldReturnHashedFormat() {
+        // Act
+        String hashed = PasswordUtil.hashPassword("testpassword");
+
+        // Assert
+        assertNotNull(hashed, "Hashed password should not be null.");
+        assertTrue(hashed.contains(":"), "Hashed password should contain delimiter.");
+        String[] parts = hashed.split(":", 2);
+        assertEquals(2, parts.length, "Hashed password should have two parts (salt:hash).");
+        assertFalse(parts[0].isEmpty(), "Salt should not be empty.");
+        assertFalse(parts[1].isEmpty(), "Hash should not be empty.");
+    }
+
+    @Test
+    void passwordUtil_hashPassword_samePasswordShouldProduceDifferentHashes() {
+        // Act
+        String hash1 = PasswordUtil.hashPassword("testpassword");
+        String hash2 = PasswordUtil.hashPassword("testpassword");
+
+        // Assert
+        assertNotEquals(hash1, hash2, "Same password should produce different hashes due to different salts.");
+    }
+
+    @Test
+    void passwordUtil_hashPassword_nullPassword_shouldThrowException() {
+        // Act & Assert
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, 
+            () -> PasswordUtil.hashPassword(null),
+            "Should throw IllegalArgumentException for null password.");
+        assertTrue(exception.getMessage().contains("null"), "Exception message should mention null.");
+    }
+
+    @Test
+    void passwordUtil_hashPassword_emptyPassword_shouldThrowException() {
+        // Act & Assert
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, 
+            () -> PasswordUtil.hashPassword(""),
+            "Should throw IllegalArgumentException for empty password.");
+        assertTrue(exception.getMessage().contains("empty"), "Exception message should mention empty.");
+    }
+
+    @Test
+    void passwordUtil_verifyPassword_newFormat_shouldVerifyCorrectly() {
+        // Arrange
+        String plainPassword = "testpassword";
+        String hashed = PasswordUtil.hashPassword(plainPassword);
+
+        // Act & Assert
+        assertTrue(PasswordUtil.verifyPassword(plainPassword, hashed), 
+            "Should verify correct password with new format.");
+        assertFalse(PasswordUtil.verifyPassword("wrongpassword", hashed), 
+            "Should reject incorrect password.");
+    }
+
+    @Test
+    void passwordUtil_verifyPassword_plainText_shouldVerifyCorrectly() {
+        // Arrange
+        String plainPassword = "testpassword";
+        String storedPassword = "testpassword";
+
+        // Act & Assert
+        assertTrue(PasswordUtil.verifyPassword(plainPassword, storedPassword), 
+            "Should verify correct plain text password.");
+        assertFalse(PasswordUtil.verifyPassword("wrongpassword", storedPassword), 
+            "Should reject incorrect plain text password.");
+    }
+
+    @Test
+    void passwordUtil_verifyPassword_hexHash_shouldVerifyCorrectly() {
+        // Arrange - SHA-256 hash of "password123" in hex
+        String plainPassword = "password123";
+        String hexHash = "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f";
+
+        // Act & Assert
+        assertTrue(PasswordUtil.verifyPassword(plainPassword, hexHash), 
+            "Should verify correct password with hex hash format.");
+        assertFalse(PasswordUtil.verifyPassword("wrongpassword", hexHash), 
+            "Should reject incorrect password with hex hash format.");
+    }
+
+    @Test
+    void passwordUtil_verifyPassword_hexHash_caseInsensitive_shouldWork() {
+        // Arrange - SHA-256 hash of "password123" in uppercase hex
+        String plainPassword = "password123";
+        String hexHashUpper = "EF92B778BAFE771E89245B89ECBC08A44A4E166C06659911881F383D4473E94F";
+
+        // Act & Assert
+        assertTrue(PasswordUtil.verifyPassword(plainPassword, hexHashUpper), 
+            "Should verify password with uppercase hex hash (case-insensitive).");
+    }
+
+    @Test
+    void passwordUtil_verifyPassword_nullInputs_shouldReturnFalse() {
+        // Act & Assert
+        assertFalse(PasswordUtil.verifyPassword(null, "hashed"), 
+            "Should return false for null plain password.");
+        assertFalse(PasswordUtil.verifyPassword("password", null), 
+            "Should return false for null hashed password.");
+        assertFalse(PasswordUtil.verifyPassword(null, null), 
+            "Should return false for both null inputs.");
+    }
+
+    @Test
+    void passwordUtil_verifyPassword_invalidFormat_shouldReturnFalse() {
+        // Arrange - Invalid format (has delimiter but invalid Base64)
+        String invalidHash = "invalid:base64:format";
+
+        // Act & Assert
+        assertFalse(PasswordUtil.verifyPassword("password", invalidHash), 
+            "Should return false for invalid hash format.");
+    }
+
+    @Test
+    void passwordUtil_verifyPassword_malformedDelimitedFormat_shouldReturnFalse() {
+        // Arrange - Has delimiter but only one part
+        String malformed = "onlyonepart:";
+
+        // Act & Assert
+        assertFalse(PasswordUtil.verifyPassword("password", malformed), 
+            "Should return false for malformed delimited format.");
+    }
+
+    @Test
+    void passwordUtil_isHashed_shouldDetectHashedPasswords() {
+        // Act & Assert
+        assertTrue(PasswordUtil.isHashed("salt:hash"), 
+            "Should detect hashed password with delimiter.");
+        assertTrue(PasswordUtil.isHashed("abc:def"), 
+            "Should detect any string with delimiter as hashed.");
+        assertFalse(PasswordUtil.isHashed("plaintext"), 
+            "Should not detect plain text as hashed.");
+        assertFalse(PasswordUtil.isHashed(null), 
+            "Should not detect null as hashed.");
+        assertFalse(PasswordUtil.isHashed(""), 
+            "Should not detect empty string as hashed.");
+    }
+
+    @Test
+    void passwordUtil_verifyPassword_shortHexString_shouldTreatAsPlainText() {
+        // Arrange - String that looks like hex but is too short
+        String shortHex = "abc123";
+
+        // Act & Assert
+        assertFalse(PasswordUtil.verifyPassword("password", shortHex), 
+            "Short hex string should be treated as plain text and fail verification.");
+    }
+
+    @Test
+    void passwordUtil_verifyPassword_invalidHexCharacters_shouldTreatAsPlainText() {
+        // Arrange - 64 characters but contains invalid hex characters
+        String invalidHex = "g".repeat(64);
+
+        // Act & Assert
+        assertFalse(PasswordUtil.verifyPassword("password", invalidHex), 
+            "Invalid hex characters should be treated as plain text.");
+    }
 
     /**
      * Helper method to create a test Staff object with all required fields.

@@ -96,13 +96,6 @@ public class TestLogin {
         System.setIn(new ByteArrayInputStream(data.getBytes()));
     }
     
-    /** Helper to ensure input stream is properly reset before use */
-    private void resetAndSetInput(String data) {
-        // Restore original System.in first to avoid any issues
-        System.setIn(originalSystemIn);
-        // Then set the new input
-        setInput(data);
-    }
 
     // ==================== I. LoginController Tests ====================
 
@@ -425,8 +418,7 @@ public class TestLogin {
 
     @Test
     void validateLogin_multipleUsers_shouldAuthenticateCorrectUser() throws IOException {
-        // Arrange: S1002 exists with password "pass456" from setupAll()
-        String input = "S1002\npass456\n";
+        String input = "S1111\n123456\n";
         setInput(input);
         LoginController controller = new LoginController();
 

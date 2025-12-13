@@ -1,6 +1,6 @@
 package main.java.controller;
 
-import main.java.config.MenuOption;
+import main.java.config.ItemMenuOption;
 import main.java.model.ItemRecord;
 import main.java.repository.ItemRepository;
 import main.java.view.ItemView;
@@ -20,27 +20,27 @@ public class ItemController {
             int sel = view.menu();
             
             // Map the integer input back to the enum constant
-            MenuOption selectedOption = MenuOption.fromValue(sel);
+            ItemMenuOption selectedOption = ItemMenuOption.fromValue(sel);
             
             // The switch statement now uses the enum constant's value
-            switch (selectedOption != null ? selectedOption.getValue() : -1) {
-                case 1: // MenuOption.ADD.getValue()
+            switch (selectedOption) {
+                case ADD: 
                     handleAdd();
                     break;
-                case 2: // MenuOption.SEARCH.getValue()
+                case SEARCH: 
                     handleSearch();
                     break;
-                case 3: // MenuOption.MODIFY.getValue()
+                case MODIFY: 
                     handleModify();
                     break;
-                case 4: // MenuOption.DELETE.getValue()
+                case DELETE: 
                     handleDelete();
                     break;
-                case 5: // MenuOption.EXIT.getValue()
+                case EXIT: 
                     back = true;
                     break;
                 default:
-                    // This block is theoretically unreachable due to ItemView validation
+                    // Usually unreachable due to ItemView validation
                     view.info("\nInvalid input."); 
             }
         }
@@ -77,7 +77,7 @@ public class ItemController {
 
     private void handleModify() {
         String oldCode = view.promptCode("Enter Item Code to modify: ").trim();
-        // Handle 'X' input from promptCode to exit modify operation
+        // 'X' to cancel modify operation
         if (oldCode.equals("X")) {
             return;
         }
@@ -89,27 +89,19 @@ public class ItemController {
                 return;
             }
             
-            // Get updated record, which may contain a new code
+            // Get updated record
             ItemRecord updated = view.promptUpdate(current);
             
-            // --- FIX 1: Handle user choosing to back out during update prompting ---
             if (updated == null) {
                 view.info("\nModification cancelled.");
                 return;
             }
-            // ---------------------------------------------------------------------
-
             String newCode = updated.getCode();
             
-            // Check: If the code changed, ensure the new code doesn't exist.
-            // This is the correct logic for preventing duplicate codes on update.
             if (!oldCode.equals(newCode) && repository.findByCode(newCode) != null) {
                 view.info("\nFailed to update item. The new Item Code '" + newCode + "' already exists.");
                 return;
             }
-
-            // The update method now requires the old code to find the original line,
-            // and the updated record to write the new line.
             boolean ok = repository.update(oldCode, updated);
             view.info(ok ? "\nItem updated." : "\nFailed to update item.");
         } catch (Exception e) {

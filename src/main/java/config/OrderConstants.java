@@ -5,11 +5,11 @@ public final class OrderConstants {
 
     // File parsing constants
     public static final String FIELD_DELIMITER = "||";
-    public static final String FIELD_DELIMITER_REGEX = "\\|\\|"; // Regex-escaped version for split operations
+    public static final String FIELD_DELIMITER_REGEX = "\\|\\|";
     public static final String TEMP_FILE_EXTENSION = ".tmp";
     public static final int MIN_PARTS_LENGTH = 5;
-    public static final int ORDER_LINE_FIELD_COUNT = 3; // code, qty, subtotal
-    public static final int ORDER_LINE_START_INDEX = 2; // Order lines start at index 2 (after orderNumber and date)
+    public static final int ORDER_LINE_FIELD_COUNT = 3; 
+    public static final int ORDER_LINE_START_INDEX = 2;
 
     // Date format
     public static final String DATE_FORMAT_PATTERN = "yyyy-MM-dd HH:mm:ss";
@@ -24,7 +24,7 @@ public final class OrderConstants {
     // Order number format
     public static final String ORDER_NUMBER_FORMAT = "O****";
     public static final String ORDER_NUMBER_PREFIX = "O";
-    public static final String ORDER_NUMBER_PATTERN = "^O\\d+$"; // O followed by one or more digits
+    public static final String ORDER_NUMBER_PATTERN = "^O\\d+$";
 
     // Price format
     public static final String PRICE_FORMAT = "%.2f";

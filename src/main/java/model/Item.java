@@ -1,7 +1,5 @@
 package main.java.model;
 
-// Removed I/O, Scanner, and controller.Home imports
-
 public abstract class Item {
 
 	protected String ItemCode;

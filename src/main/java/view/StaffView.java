@@ -5,9 +5,9 @@ import java.util.function.Predicate;
 import main.java.model.Staff;
 import main.java.model.Name;
 import main.java.model.Address;
-import main.java.model.Validation;
 import main.java.config.StaffConstants;
 import main.java.config.StaffMenuOption;
+import main.java.controller.Validation;
 
 public class StaffView {
     private final Scanner scanner = new Scanner(System.in);
@@ -33,16 +33,26 @@ public class StaffView {
      */
     public Staff promptNewStaff() {
         scanner.nextLine(); // consume newline
-        String staffId = promptValidated(StaffConstants.PROMPT_STAFF_ID_NEW, Validation::isStaffId, StaffConstants.MSG_INVALID_STAFF_ID_FORMAT);
-        String password = promptValidated(StaffConstants.PROMPT_PASSWORD, Validation::isNonEmpty, StaffConstants.MSG_REQUIRED_FIELD);
-        String first = promptValidated(StaffConstants.PROMPT_FIRST_NAME, Validation::isNonEmpty, StaffConstants.MSG_REQUIRED_FIELD);
-        String last = promptValidated(StaffConstants.PROMPT_LAST_NAME, Validation::isNonEmpty, StaffConstants.MSG_REQUIRED_FIELD);
-        String phone = promptValidated(StaffConstants.PROMPT_PHONE_NO, Validation::isPhone, StaffConstants.MSG_INVALID_PHONE_FORMAT);
-        String position = promptValidated(StaffConstants.PROMPT_STAFF_POSITION, Validation::isNonEmpty, StaffConstants.MSG_REQUIRED_FIELD);
-        String street = promptValidated(StaffConstants.PROMPT_STREET, Validation::isNonEmpty, StaffConstants.MSG_REQUIRED_FIELD);
-        String postcode = promptValidated(StaffConstants.PROMPT_POSTCODE, Validation::isPostcode, StaffConstants.MSG_INVALID_POSTCODE_FORMAT);
-        String region = promptValidated(StaffConstants.PROMPT_REGION, Validation::isNonEmpty, StaffConstants.MSG_REQUIRED_FIELD);
-        String state = promptValidated(StaffConstants.PROMPT_STATE, Validation::isNonEmpty, StaffConstants.MSG_REQUIRED_FIELD);
+        String staffId = 
+        promptValidated(StaffConstants.PROMPT_STAFF_ID_NEW, Validation::isStaffId, StaffConstants.MSG_INVALID_STAFF_ID_FORMAT);
+        String password = 
+        promptValidated(StaffConstants.PROMPT_PASSWORD, Validation::isNonEmpty, StaffConstants.MSG_REQUIRED_FIELD);
+        String first = 
+        promptValidated(StaffConstants.PROMPT_FIRST_NAME, Validation::isNonEmpty, StaffConstants.MSG_REQUIRED_FIELD);
+        String last = 
+        promptValidated(StaffConstants.PROMPT_LAST_NAME, Validation::isNonEmpty, StaffConstants.MSG_REQUIRED_FIELD);
+        String phone = 
+        promptValidated(StaffConstants.PROMPT_PHONE_NO, Validation::isPhone, StaffConstants.MSG_INVALID_PHONE_FORMAT);
+        String position = 
+        promptValidated(StaffConstants.PROMPT_STAFF_POSITION, Validation::isNonEmpty, StaffConstants.MSG_REQUIRED_FIELD);
+        String street = 
+        promptValidated(StaffConstants.PROMPT_STREET, Validation::isNonEmpty, StaffConstants.MSG_REQUIRED_FIELD);
+        String postcode = 
+        promptValidated(StaffConstants.PROMPT_POSTCODE, Validation::isPostcode, StaffConstants.MSG_INVALID_POSTCODE_FORMAT);
+        String region = 
+        promptValidated(StaffConstants.PROMPT_REGION, Validation::isNonEmpty, StaffConstants.MSG_REQUIRED_FIELD);
+        String state = 
+        promptValidated(StaffConstants.PROMPT_STATE, Validation::isNonEmpty, StaffConstants.MSG_REQUIRED_FIELD);
         return new Staff(staffId, password, new Name(first, last), phone, position, new Address(street, postcode, region, state));
     }
 

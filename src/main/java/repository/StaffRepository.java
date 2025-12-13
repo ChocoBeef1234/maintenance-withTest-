@@ -13,6 +13,7 @@ import main.java.model.Name;
 import main.java.model.Address;
 import main.java.config.FilePaths;
 import main.java.config.StaffConstants;
+import main.java.util.PasswordUtil;
 
 public class StaffRepository {
 
@@ -62,6 +63,7 @@ public class StaffRepository {
 
     /**
      * Appends a new staff record if the file exists and ID is unique.
+     * Passwords are automatically hashed before saving.
      * @param staff staff entity to add
      * @return true when added; false for missing file or duplicate ID
      */
@@ -73,14 +75,28 @@ public class StaffRepository {
         if (findById(staff.getStaffId()) != null) {
             return false;
         }
+        Staff staffToSave = staff;
+        String password = staff.getpassword();
+        if (password != null && !PasswordUtil.isHashed(password)) {
+            String hashedPassword = PasswordUtil.hashPassword(password);
+            staffToSave = new Staff(
+                staff.getStaffId(),
+                hashedPassword,
+                staff.getname(),
+                staff.getphoneNo(),
+                staff.getStaffPosition(),
+                staff.getaddress()
+            );
+        }
         try (PrintWriter writer = new PrintWriter(new FileWriter(staffFile, true))) {
-            writer.println(toLine(staff));
+            writer.println(toLine(staffToSave));
         }
         return true;
     }
 
     /**
      * Updates an existing staff record by ID.
+     * Passwords are automatically hashed before saving if not already hashed.
      * @param id current ID to match
      * @param updated new staff data to write
      * @return true when the record is found and replaced
@@ -91,6 +107,19 @@ public class StaffRepository {
         if (!staffFile.exists()) {
             return false;
         }
+        Staff staffToSave = updated;
+        String password = updated.getpassword();
+        if (password != null && !PasswordUtil.isHashed(password)) {
+            String hashedPassword = PasswordUtil.hashPassword(password);
+            staffToSave = new Staff(
+                updated.getStaffId(),
+                hashedPassword,
+                updated.getname(),
+                updated.getphoneNo(),
+                updated.getStaffPosition(),
+                updated.getaddress()
+            );
+        }
         boolean found = false;
         try (BufferedReader reader = new BufferedReader(new FileReader(staffFile));
              PrintWriter writer = new PrintWriter(new FileWriter(newFile))) {
@@ -98,7 +127,7 @@ public class StaffRepository {
             while ((line = reader.readLine()) != null) {
                 Staff staff = parseStaffLine(line);
                 if (staff != null && staff.getStaffId().equals(id)) {
-                    writer.println(toLine(updated));
+                    writer.println(toLine(staffToSave));
                     found = true;
                 } else {
                     writer.println(line);
@@ -149,14 +178,18 @@ public class StaffRepository {
 
     /**
      * Verifies login credentials by comparing stored password.
+     * Supports both hashed and plain text passwords for backward compatibility.
      * @param id staff ID
-     * @param password plain text password to match
+     * @param password plain text password to verify
      * @return staff when credentials match; otherwise null
      */
     public Staff validateCredentials(String id, String password) throws IOException {
         Staff staff = findById(id);
-        if (staff != null && staff.getpassword().equals(password)) {
-            return staff;
+        if (staff != null) {
+            String storedPassword = staff.getpassword();
+            if (PasswordUtil.verifyPassword(password, storedPassword)) {
+                return staff;
+            }
         }
         return null;
     }
