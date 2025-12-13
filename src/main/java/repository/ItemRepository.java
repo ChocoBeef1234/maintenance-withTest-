@@ -14,8 +14,6 @@ import main.java.model.ItemRecord;
 
 public class ItemRepository {
 
-    // Note: Removed redundant private final String FILE_NAME = FilePaths.ITEM;
-    // as methods already use FilePaths.ITEM directly.
 
     public List<ItemRecord> findAll() throws IOException {
         List<ItemRecord> items = new ArrayList<>();
@@ -54,9 +52,8 @@ public class ItemRepository {
 
     public boolean add(ItemRecord r) throws IOException {
         if (findByCode(r.getCode()) != null) {
-            return false; // Code exists
+            return false; 
         }
-        // Using try-with-resources ensures the writer is closed automatically.
         try (PrintWriter writer = new PrintWriter(new FileWriter(FilePaths.ITEM, true))) {
             writer.println(toLine(r));
         }

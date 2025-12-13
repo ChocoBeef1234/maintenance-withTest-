@@ -1,6 +1,5 @@
 package main.java.model;
 
-// Represents mailing details for a staff member; kept independent from Staff
 public class Address {
     private String street;
     private String postcode;

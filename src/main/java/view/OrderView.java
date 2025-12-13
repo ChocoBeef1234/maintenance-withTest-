@@ -2,6 +2,7 @@ package main.java.view;
 import java.util.Scanner;
 import main.java.config.OrderConstants;
 import main.java.config.OrderMenuOption;
+import main.java.controller.Validation;
 import main.java.model.*;
 
 public class OrderView {

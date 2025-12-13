@@ -1,7 +1,5 @@
 package main.java.model;
 
-// Removed I/O, Scanner, and controller.Home imports
-
 public class Medicine extends Item {
 
 	private String ForDisease;

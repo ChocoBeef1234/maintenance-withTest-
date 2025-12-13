@@ -15,12 +15,10 @@ public enum StaffMenuOption {
         this.description = description;
     }
 
-    /** Returns the numeric value shown in the menu. */
     public int getOptionNumber() {
         return optionNumber;
     }
 
-    /** Returns the plain-text description. */
     public String getDescription() {
         return description;
     }

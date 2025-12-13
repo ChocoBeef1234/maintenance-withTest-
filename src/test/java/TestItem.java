@@ -24,12 +24,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-/**
- * JUnit Jupiter tests for ItemRepository, ItemView, and ItemController,
- * focusing on safe CRUD operations, validation, and input handling.
- * Note: These tests assume a config.FilePaths.ITEM constant resolves to
- * "Item.txt".
- */
+
 public class TestItem {
 
         // --- File Management Constants and Setup ---
